@@ -58,7 +58,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
       </div>
 
       <div style={{ marginTop: "10px", fontSize: "0.75rem" }}>
-        Due: {new Date(dueDate).toLocaleString()}
+        Due: {new Date(dueDate).toISOString().split("T").join(" ").slice(0, 16)}
       </div>
     </div>
   );
