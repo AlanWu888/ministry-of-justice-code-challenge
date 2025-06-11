@@ -1,67 +1,66 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import TaskCard from "./TaskCard";
 import { Task } from "@/types/task";
 
-const initialTasks: Task[] = [
-    {
-        id: 1,
-        title: "Task 1",
-        description: "Description",
-        status: "TODO",
-        dueDate: "2025-06-15T10:00:00.000Z",
-        createdAt: "2025-06-09T14:09:30.507Z",
-        updatedAt: "2025-06-09T14:09:30.507Z"
-    },
-    {
-        id: 2,
-        title: "Task 2",
-        description: "Description",
-        status: "IN_PROGRESS",
-        dueDate: "2025-06-15T10:00:00.000Z",
-        createdAt: "2025-06-09T14:09:30.507Z",
-        updatedAt: "2025-06-09T14:09:30.507Z"
-    },
-    {
-        id: 3,
-        title: "Task 3",
-        description: "Description",
-        status: "DONE",
-        dueDate: "2025-06-15T10:00:00.000Z",
-        createdAt: "2025-06-09T14:09:30.507Z",
-        updatedAt: "2025-06-09T14:09:30.507Z"
-    },
-    {
-        id: 4,
-        title: "Task 4",
-        description: "Description",
-        status: "DONE",
-        dueDate: "2025-06-15T10:00:00.000Z",
-        createdAt: "2025-06-09T14:09:30.507Z",
-        updatedAt: "2025-06-09T14:09:30.507Z"
-    },
-];
-
 const statuses = ["TODO", "IN_PROGRESS", "DONE"];
+const authHeader = `Bearer ${process.env.NEXT_PUBLIC_API_SECRET}`;
 
-const TaskBoard = () => {
-  const [tasks, setTasks] = useState(initialTasks);
+const Board = () => {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const onDragEnd = (result: any) => {
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const res = await fetch("/api/tasks", {
+          headers: {
+            "Authorization": authHeader,
+          },
+        });
+        const data = await res.json();
+        setTasks(data);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTasks();
+  }, []);
+
+  const onDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
-  
+
     if (!destination || destination.droppableId === source.droppableId) return;
-  
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id.toString() === draggableId
-          ? { ...task, status: destination.droppableId }
-          : task
-      )
+
+    const updatedTasks = tasks.map((task) =>
+      task.id.toString() === draggableId
+        ? { ...task, status: destination.droppableId }
+        : task
     );
-  };  
+
+    setTasks(updatedTasks);
+
+    try {
+      await fetch(`/api/tasks/${draggableId}/patch`, {
+        method: "PATCH",
+        headers: {
+          "Authorization": authHeader,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: destination.droppableId }),
+      });
+    } catch (error) {
+      console.error("Failed to update task:", error);
+      setTasks(tasks);
+    }
+  };
+
+  if (loading) return <p>Loading tasks...</p>;
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -75,21 +74,23 @@ const TaskBoard = () => {
                 {...provided.droppableProps}
               >
                 <h2 className="text-xl font-bold mb-2">{status.replace("_", " ")}</h2>
-                {tasks
-                  .filter((task) => task.status === status)
-                  .map((task, index) => (
-                    <Draggable draggableId={task.id.toString()} index={index} key={task.id}>
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <TaskCard task={task} />
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
+                <div className="space-y-2">
+                  {tasks
+                    .filter((task) => task.status === status)
+                    .map((task, index) => (
+                      <Draggable draggableId={task.id.toString()} index={index} key={task.id}>
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <TaskCard task={task} />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                </div>
                 {provided.placeholder}
               </div>
             )}
@@ -100,4 +101,4 @@ const TaskBoard = () => {
   );
 };
 
-export default TaskBoard;
+export default Board;

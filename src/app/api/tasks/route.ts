@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 function isAuthorised(req: NextRequest) {
   const authHeader = req.headers.get('authorization')
-  return authHeader === `Bearer ${process.env.API_SECRET}`
+  return authHeader === `Bearer ${process.env.NEXT_PUBLIC_API_SECRET}`
 }
 
 export async function GET(req: NextRequest) {
