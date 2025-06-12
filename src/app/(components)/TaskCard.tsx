@@ -1,21 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Pencil } from "lucide-react";
 
 import { Task } from "@/types/task";
 import Button from "./Button";
+import Modal from "./Modal";
+import EditForm from "./EditForm";
 
 interface TaskCardProps {
   task: Task;
+  onSave: (updatedTask: Task) => Promise<void>;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ task, onSave }) => {
   const { title, description, status, dueDate } = task;
-
-  const statusColor = {
-    TODO: "#fbbf24",        // yellow
-    IN_PROGRESS: "#60a5fa", // blue
-    DONE: "#4ade80",        // green
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div
@@ -23,46 +21,15 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
         border: "1px solid black",
         borderRadius: "10px",
         padding: "10px",
-        backgroundColor: "white"
+        backgroundColor: "white",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between"
-        }}
-      >
-        {/* <span
-          style={{
-            padding: "5px 10px",
-            border: `2px solid ${statusColor[status]}`,
-            borderRadius: "5px",
-            backgroundColor: statusColor[status],
-            color: "white",
-            fontSize: "0.75rem",
-            fontWeight: "bold",
-            marginRight: "10px",
-            textTransform: "capitalize",
-          }}
-        >
-          {status.replace("_", " ")}
-        </span> */}
-        <h2 style={{ margin: 0 , fontWeight: "bold"}}>{title}</h2>
-        <Button
-          onClick={() => console.log("Edit clicked")}
-          icon={<Pencil size={16} />}
-          // className="bg-gray-100 hover:bg-gray-200"
-        />
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between"}}>
+        <h2 style={{ margin: 0, fontWeight: "bold" }}>{title}</h2>
+        <Button onClick={() => setIsModalOpen(true)} icon={<Pencil size={"16px"} />} />
       </div>
 
-      <div
-        style={{
-          borderTop: "1px solid black",
-          marginTop: "10px",
-          paddingTop: "10px",
-        }}
-      >
+      <div style={{ borderTop: "1px solid black", marginTop: "10px", paddingTop: "10px" }}>
         <p style={{ fontSize: "0.75rem", margin: 0 }}>Description:</p>
         <p style={{ marginTop: "5px" }}>{description}</p>
       </div>
@@ -70,6 +37,18 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
       <div style={{ marginTop: "10px", fontSize: "0.75rem" }}>
         Due: {new Date(dueDate).toISOString().split("T").join(" ").slice(0, 16)}
       </div>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <h3 className="text-lg font-semibold mb-4">Edit Task</h3>
+        <EditForm
+          task={task}
+          onSave={async (updatedTask) => {
+            await onSave(updatedTask);
+            setIsModalOpen(false);
+          }}
+          onCancel={() => setIsModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 };

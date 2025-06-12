@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import TaskCard from "./TaskCard";
 import { Task } from "@/types/task";
@@ -8,29 +8,39 @@ import { Task } from "@/types/task";
 const statuses = ["TODO", "IN_PROGRESS", "DONE"];
 const authHeader = `Bearer ${process.env.NEXT_PUBLIC_API_SECRET}`;
 
-const Board = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
+interface TaskBoardProps {
+  tasks: Task[];
+  loading: boolean;
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+}
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const res = await fetch("/api/tasks", {
-          headers: {
-            "Authorization": authHeader,
-          },
-        });
-        const data = await res.json();
-        setTasks(data);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+const TaskBoard: React.FC<TaskBoardProps> = ({ tasks, loading, setTasks }) => {
+  const handleTaskUpdate = async (updatedTask: Task) => {
+    try {
+      const res = await fetch(`/api/tasks/${updatedTask.id}/patch`, {
+        method: "PATCH",
+        headers: {
+          Authorization: authHeader,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: updatedTask.title,
+          description: updatedTask.description,
+          status: updatedTask.status,
+          dueDate: updatedTask.dueDate,
+        }),
+      });
 
-    fetchTasks();
-  }, []);
+      if (!res.ok) throw new Error("Failed to update");
+
+      const savedTask = await res.json();
+      setTasks((prev) =>
+        prev.map((t) => (t.id === savedTask.id ? savedTask : t))
+      );
+    } catch (err) {
+      console.error("Update failed", err);
+    }
+  };
 
   const onDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
@@ -49,7 +59,7 @@ const Board = () => {
       await fetch(`/api/tasks/${draggableId}/patch`, {
         method: "PATCH",
         headers: {
-          "Authorization": authHeader,
+          Authorization: authHeader,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ status: destination.droppableId }),
@@ -73,13 +83,18 @@ const Board = () => {
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
-                <h2 className="text-xl font-bold mb-2">{status.replace("_", " ")}</h2>
-
+                <h2 className="text-xl font-bold mb-2">
+                  {status.replace("_", " ")}
+                </h2>
                 <div>
                   {tasks
                     .filter((task) => task.status === status)
                     .map((task, index) => (
-                      <Draggable draggableId={task.id.toString()} index={index} key={task.id}>
+                      <Draggable
+                        draggableId={task.id.toString()}
+                        index={index}
+                        key={task.id}
+                      >
                         {(provided) => (
                           <div
                             className="mb-2"
@@ -87,14 +102,13 @@ const Board = () => {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                           >
-                            <TaskCard task={task} />
+                            <TaskCard task={task} onSave={handleTaskUpdate} />
                           </div>
                         )}
                       </Draggable>
                     ))}
                   <div className="mb-2">{provided.placeholder}</div>
                 </div>
-
               </div>
             )}
           </Droppable>
@@ -104,4 +118,4 @@ const Board = () => {
   );
 };
 
-export default Board;
+export default TaskBoard;

@@ -22,7 +22,7 @@ const Button: React.FC<ButtonProps> = ({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`inline-flex items-center px-2 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed" ${className}`}
+      className={`inline-flex items-center px-1 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed" ${className}`}
     >
       {icon && (
         <span className={children ? "mr-2" : ""}>
