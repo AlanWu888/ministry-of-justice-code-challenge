@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import TaskCard from "./TaskCard";
@@ -12,45 +10,17 @@ interface TaskBoardProps {
   tasks: Task[];
   loading: boolean;
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+  onEditTask: (task: Task) => void;
 }
 
-const TaskBoard: React.FC<TaskBoardProps> = ({ tasks, loading, setTasks }) => {
-  const handleTaskUpdate = async (updatedTask: Task) => {
-    try {
-      const res = await fetch(`/api/tasks/${updatedTask.id}/patch`, {
-        method: "PATCH",
-        headers: {
-          Authorization: authHeader,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: updatedTask.title,
-          description: updatedTask.description,
-          status: updatedTask.status,
-          dueDate: updatedTask.dueDate,
-        }),
-      });
-
-      if (!res.ok) throw new Error("Failed to update");
-
-      const savedTask = await res.json();
-      setTasks((prev) =>
-        prev.map((t) => (t.id === savedTask.id ? savedTask : t))
-      );
-    } catch (err) {
-      console.error("Update failed", err);
-    }
-  };
-
+const TaskBoard: React.FC<TaskBoardProps> = ({ tasks, loading, setTasks, onEditTask }) => {
   const onDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
 
     if (!destination || destination.droppableId === source.droppableId) return;
 
     const updatedTasks = tasks.map((task) =>
-      task.id.toString() === draggableId
-        ? { ...task, status: destination.droppableId }
-        : task
+      task.id.toString() === draggableId ? { ...task, status: destination.droppableId } : task
     );
 
     setTasks(updatedTasks);
@@ -66,7 +36,7 @@ const TaskBoard: React.FC<TaskBoardProps> = ({ tasks, loading, setTasks }) => {
       });
     } catch (error) {
       console.error("Failed to update task:", error);
-      setTasks(tasks);
+      setTasks(tasks); // Revert
     }
   };
 
@@ -78,35 +48,18 @@ const TaskBoard: React.FC<TaskBoardProps> = ({ tasks, loading, setTasks }) => {
         {statuses.map((status) => (
           <Droppable droppableId={status} key={status}>
             {(provided) => (
-              <div
-                className="p-4 bg-gray-100 rounded-2xl border border-black"
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-              >
-                <h2 className="text-xl font-bold mb-2">
-                  {status.replace("_", " ")}
-                </h2>
+              <div className="p-4 bg-gray-100 rounded-2xl border border-black" ref={provided.innerRef} {...provided.droppableProps}>
+                <h2 className="text-xl font-bold mb-2">{status.replace("_", " ")}</h2>
                 <div>
-                  {tasks
-                    .filter((task) => task.status === status)
-                    .map((task, index) => (
-                      <Draggable
-                        draggableId={task.id.toString()}
-                        index={index}
-                        key={task.id}
-                      >
-                        {(provided) => (
-                          <div
-                            className="mb-2"
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          >
-                            <TaskCard task={task} onSave={handleTaskUpdate} />
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
+                  {tasks.filter((task) => task.status === status).map((task, index) => (
+                    <Draggable draggableId={task.id.toString()} index={index} key={task.id}>
+                      {(provided) => (
+                        <div className="mb-2" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                          <TaskCard task={task} onEdit={onEditTask} />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
                   <div className="mb-2">{provided.placeholder}</div>
                 </div>
               </div>
