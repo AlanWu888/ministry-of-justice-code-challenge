@@ -1,5 +1,8 @@
 import React from "react";
+import { Pencil } from "lucide-react";
+
 import { Task } from "@/types/task";
+import Button from "./Button";
 
 interface TaskCardProps {
   task: Task;
@@ -27,9 +30,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
         style={{
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between"
         }}
       >
-        <span
+        {/* <span
           style={{
             padding: "5px 10px",
             border: `2px solid ${statusColor[status]}`,
@@ -43,8 +47,13 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
           }}
         >
           {status.replace("_", " ")}
-        </span>
-        <h2 style={{ margin: 0 }}>{title}</h2>
+        </span> */}
+        <h2 style={{ margin: 0 , fontWeight: "bold"}}>{title}</h2>
+        <Button
+          onClick={() => console.log("Edit clicked")}
+          icon={<Pencil size={16} />}
+          // className="bg-gray-100 hover:bg-gray-200"
+        />
       </div>
 
       <div

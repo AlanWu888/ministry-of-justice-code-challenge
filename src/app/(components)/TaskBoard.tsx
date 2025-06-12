@@ -69,18 +69,20 @@ const Board = () => {
           <Droppable droppableId={status} key={status}>
             {(provided) => (
               <div
-                className="p-4 bg-gray-100 rounded"
+                className="p-4 bg-gray-100 rounded-2xl border border-black"
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
                 <h2 className="text-xl font-bold mb-2">{status.replace("_", " ")}</h2>
-                <div className="space-y-2">
+
+                <div>
                   {tasks
                     .filter((task) => task.status === status)
                     .map((task, index) => (
                       <Draggable draggableId={task.id.toString()} index={index} key={task.id}>
                         {(provided) => (
                           <div
+                            className="mb-2"
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
@@ -90,8 +92,9 @@ const Board = () => {
                         )}
                       </Draggable>
                     ))}
+                  <div className="mb-2">{provided.placeholder}</div>
                 </div>
-                {provided.placeholder}
+
               </div>
             )}
           </Droppable>
