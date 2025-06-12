@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
+import NavBar from "./(components)/NavBar";
 import TaskBoard from "./(components)/TaskBoard";
 import { Task } from "@/types/task";
 
@@ -30,6 +31,8 @@ export default function Home() {
 
   return (
     <div>
+      <NavBar onTaskCreated={fetchTasks} />
+      <br />
       <div className="px-20">
         <TaskBoard tasks={tasks} loading={loading} setTasks={setTasks} />
       </div>
