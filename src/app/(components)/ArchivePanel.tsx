@@ -8,9 +8,10 @@ interface ArchivePanelProps {
   isOpen: boolean;
   onClose: () => void;
   onEditTask: (task: Task) => void;
+  refreshSignal: number;
 }
 
-const ArchivePanel: React.FC<ArchivePanelProps> = ({ isOpen, onClose, onEditTask }) => {
+const ArchivePanel: React.FC<ArchivePanelProps> = ({ isOpen, onClose, onEditTask, refreshSignal }) => {
   const [archivedTasks, setArchivedTasks] = useState<Task[]>([]);
 
   useEffect(() => {
@@ -33,7 +34,7 @@ const ArchivePanel: React.FC<ArchivePanelProps> = ({ isOpen, onClose, onEditTask
     };
 
     fetchArchivedTasks();
-  }, [isOpen]);
+  }, [isOpen, refreshSignal]);
 
   return (
     <div className={`fixed top-0 left-0 h-full w-96 bg-white shadow-xl z-50 transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>

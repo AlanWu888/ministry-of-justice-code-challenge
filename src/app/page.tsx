@@ -1,16 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "./(components)/NavBar";
 import TaskBoard from "./(components)/TaskBoard";
 import Modal from "./(components)/Modal";
 import EditForm from "./(components)/EditForm";
+import ArchivePanel from "./(components)/ArchivePanel";
 import { Task } from "@/types/task";
 
 export default function Home() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showArchive, setShowArchive] = useState(false);
+  const [archiveRefreshSignal, setArchiveRefreshSignal] = useState(0);
 
   const handleEdit = (task: Task) => setEditingTask(task);
 
@@ -28,30 +31,75 @@ export default function Home() {
       if (!res.ok) throw new Error("Update failed");
 
       const savedTask = await res.json();
-      setTasks((prev) => prev.map((t) => (t.id === savedTask.id ? savedTask : t)));
+
+      setTasks((prev) =>
+        prev.map((t) => (t.id === savedTask.id ? savedTask : t))
+      );
+
+      setArchiveRefreshSignal((prev) => prev + 1);
+
       setEditingTask(null);
     } catch (err) {
       console.error("Update error", err);
     }
   };
 
+  const fetchTasks = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/tasks", {
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_SECRET}`,
+        },
+      });
+      const data = await res.json();
+      setTasks(data);
+    } catch (err) {
+      console.error("Failed to fetch tasks:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
   return (
     <div>
-      <NavBar onTaskCreated={() => {}} onEditTask={handleEdit} />
-      <br />
-      <TaskBoard tasks={tasks} loading={loading} setTasks={setTasks} onEditTask={handleEdit} />
-      <Modal isOpen={!!editingTask} onClose={() => setEditingTask(null)}>
-        {editingTask && (
-          <>
-            <h3 className="text-lg font-semibold mb-4">Edit Task</h3>
-            <EditForm
-              task={editingTask}
-              onSave={handleTaskUpdate}
-              onCancel={() => setEditingTask(null)}
-            />
-          </>
-        )}
-      </Modal>
+      <NavBar
+        onTaskCreated={fetchTasks}
+        onEditTask={handleEdit}
+        onOpenArchive={() => setShowArchive(true)}
+      />
+      <div className="px-20">
+        <br />
+        <TaskBoard
+          tasks={tasks}
+          loading={loading}
+          setTasks={setTasks}
+          onEditTask={handleEdit}
+        />
+        <Modal isOpen={!!editingTask} onClose={() => setEditingTask(null)}>
+          {editingTask && (
+            <>
+              <h3 className="text-lg font-semibold mb-4">Edit Task</h3>
+              <EditForm
+                task={editingTask}
+                onSave={handleTaskUpdate}
+                onCancel={() => setEditingTask(null)}
+              />
+            </>
+          )}
+        </Modal>
+      </div>
+
+      <ArchivePanel
+        isOpen={showArchive}
+        onClose={() => setShowArchive(false)}
+        onEditTask={handleEdit}
+        refreshSignal={archiveRefreshSignal}
+      />
     </div>
   );
 }

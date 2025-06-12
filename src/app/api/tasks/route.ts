@@ -7,12 +7,23 @@ function isAuthorised(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (!isAuthorised(req)) {
-    return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+  const { searchParams } = new URL(req.url);
+  const statusParam = searchParams.get("status");
+
+  let where = {};
+
+  if (statusParam === "ARCHIVED") {
+    where = { archived: true };
+  } else {
+    where = { archived: false };
   }
 
-  const tasks = await prisma.task.findMany({ orderBy: { createdAt: 'desc' } })
-  return NextResponse.json(tasks)
+  const tasks = await prisma.task.findMany({
+    where,
+    orderBy: { dueDate: "asc" },
+  });
+
+  return NextResponse.json(tasks);
 }
 
 export async function POST(req: NextRequest) {

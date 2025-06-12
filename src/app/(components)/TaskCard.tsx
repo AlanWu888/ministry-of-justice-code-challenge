@@ -13,7 +13,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
 
   return (
     <div style={{ border: "1px solid black", borderRadius: "10px", padding: "10px", backgroundColor: "white" }}>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start"}}>
         <h2 style={{ margin: 0, fontWeight: "bold" }}>{title}</h2>
         <Button onClick={() => onEdit(task)} icon={<Pencil size={"16px"} />} />
       </div>
