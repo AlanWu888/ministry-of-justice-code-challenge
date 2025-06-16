@@ -7,6 +7,7 @@ import Modal from "./(components)/Modal";
 import EditForm from "./(components)/EditForm";
 import ArchivePanel from "./(components)/ArchivePanel";
 import { Task } from "@/types/task";
+import ConfirmModal from "./(components)/ConfirmationModal";
 
 export default function Home() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -14,6 +15,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [showArchive, setShowArchive] = useState(false);
   const [archiveRefreshSignal, setArchiveRefreshSignal] = useState(0);
+  const [confirmDeleteTask, setConfirmDeleteTask] = useState<Task | null>(null);
 
   const handleEdit = (task: Task) => setEditingTask(task);
 
@@ -68,11 +70,15 @@ export default function Home() {
     }
   };  
 
-  const handleDeleteTask = async (task: Task) => {
-    if (!confirm("Are you sure you want to delete this task?")) return;
+  const handleDeleteTask = (task: Task) => {
+    setConfirmDeleteTask(task);
+  };
+  
+  const confirmDelete = async () => {
+    if (!confirmDeleteTask) return;
   
     try {
-      const res = await fetch(`/api/tasks/${task.id}`, {
+      const res = await fetch(`/api/tasks/${confirmDeleteTask.id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_SECRET}`,
@@ -85,10 +91,11 @@ export default function Home() {
       setArchiveRefreshSignal((prev) => prev + 1);
     } catch (err) {
       console.error("Delete error:", err);
+    } finally {
+      setConfirmDeleteTask(null); // Close modal
     }
   };
-  
-  
+    
   const fetchTasks = async () => {
     setLoading(true);
     try {
@@ -146,6 +153,13 @@ export default function Home() {
         onEditTask={handleEdit}
         onDeleteTask={handleDeleteTask}
         refreshSignal={archiveRefreshSignal}
+      />
+
+      <ConfirmModal
+        isOpen={!!confirmDeleteTask}
+        onClose={() => setConfirmDeleteTask(null)}
+        onConfirm={confirmDelete}
+        message={`Are you sure you want to permanently delete "${confirmDeleteTask?.title}"?`}
       />
 
     </div>
