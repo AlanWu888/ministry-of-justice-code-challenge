@@ -6,9 +6,10 @@ interface EditFormProps {
   task: Task;
   onSave: (updatedTask: Task) => void;
   onCancel: () => void;
+  onToggleArchive: (task: Task) => void;
 }
 
-const EditForm: React.FC<EditFormProps> = ({ task, onSave, onCancel }) => {
+const EditForm: React.FC<EditFormProps> = ({ task, onSave, onCancel, onToggleArchive }) => {
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description);
   const [dueDate, setDueDate] = useState(task.dueDate);
@@ -63,11 +64,22 @@ const EditForm: React.FC<EditFormProps> = ({ task, onSave, onCancel }) => {
         </select>
       </div>
 
-      <div className="flex justify-end gap-2">
-        <Button type="button" onClick={onCancel} className="bg-gray-400 hover:bg-gray-500">
-          Cancel
-        </Button>
-        <Button type="submit">Save</Button>
+      <div className="flex justify-between items-center pt-4 border-t mt-4">
+      <Button
+        type="button"
+        onClick={() => onToggleArchive(task)}
+        className="bg-yellow-500 hover:bg-yellow-600"
+      >
+        {task.archived ? "Un-archive" : "Archive"}
+      </Button>
+
+
+        <div className="flex gap-2">
+          <Button type="button" onClick={onCancel} className="bg-gray-400 hover:bg-gray-500">
+            Cancel
+          </Button>
+          <Button type="submit">Save</Button>
+        </div>
       </div>
     </form>
   );

@@ -44,6 +44,30 @@ export default function Home() {
     }
   };
 
+  const handleToggleArchive = async (task: Task) => {
+    const updated = { ...task, archived: !task.archived };
+  
+    try {
+      const res = await fetch(`/api/tasks/${task.id}/patch`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_SECRET}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updated),
+      });
+  
+      if (!res.ok) throw new Error("Archive toggle failed");
+  
+      await fetchTasks();
+  
+      setArchiveRefreshSignal((prev) => prev + 1);
+      setEditingTask(null);
+    } catch (err) {
+      console.error("Error toggling archive:", err);
+    }
+  };  
+  
   const fetchTasks = async () => {
     setLoading(true);
     try {
@@ -75,7 +99,7 @@ export default function Home() {
       <div className="px-20">
         <br />
         <TaskBoard
-          tasks={tasks}
+          tasks={tasks.filter((task) => !task.archived)}
           loading={loading}
           setTasks={setTasks}
           onEditTask={handleEdit}
@@ -88,6 +112,7 @@ export default function Home() {
                 task={editingTask}
                 onSave={handleTaskUpdate}
                 onCancel={() => setEditingTask(null)}
+                onToggleArchive={handleToggleArchive}
               />
             </>
           )}
