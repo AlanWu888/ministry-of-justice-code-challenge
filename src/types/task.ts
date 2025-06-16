@@ -8,4 +8,5 @@ export interface Task {
   dueDate: string;
   createdAt: string;
   updatedAt: string;
+  archived: Boolean;
 }

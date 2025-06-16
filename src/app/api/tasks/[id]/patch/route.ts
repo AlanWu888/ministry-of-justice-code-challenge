@@ -8,7 +8,7 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
   const { id } = await context.params;
   const body = await req.json();
 
-  const allowedFields = ['title', 'description', 'status', 'dueDate'];
+  const allowedFields = ['title', 'description', 'status', 'dueDate', 'archived'];
   const data: any = {};
 
   for (const key of allowedFields) {
