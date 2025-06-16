@@ -67,6 +67,27 @@ export default function Home() {
       console.error("Error toggling archive:", err);
     }
   };  
+
+  const handleDeleteTask = async (task: Task) => {
+    if (!confirm("Are you sure you want to delete this task?")) return;
+  
+    try {
+      const res = await fetch(`/api/tasks/${task.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_SECRET}`,
+        },
+      });
+  
+      if (!res.ok) throw new Error("Delete failed");
+  
+      await fetchTasks();
+      setArchiveRefreshSignal((prev) => prev + 1);
+    } catch (err) {
+      console.error("Delete error:", err);
+    }
+  };
+  
   
   const fetchTasks = async () => {
     setLoading(true);
@@ -123,8 +144,10 @@ export default function Home() {
         isOpen={showArchive}
         onClose={() => setShowArchive(false)}
         onEditTask={handleEdit}
+        onDeleteTask={handleDeleteTask}
         refreshSignal={archiveRefreshSignal}
       />
+
     </div>
   );
 }

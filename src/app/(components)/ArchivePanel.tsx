@@ -8,10 +8,11 @@ interface ArchivePanelProps {
   isOpen: boolean;
   onClose: () => void;
   onEditTask: (task: Task) => void;
+  onDeleteTask: (task: Task) => void;
   refreshSignal: number;
 }
 
-const ArchivePanel: React.FC<ArchivePanelProps> = ({ isOpen, onClose, onEditTask, refreshSignal }) => {
+const ArchivePanel: React.FC<ArchivePanelProps> = ({ isOpen, onClose, onEditTask, onDeleteTask, refreshSignal }) => {
   const [archivedTasks, setArchivedTasks] = useState<Task[]>([]);
 
   useEffect(() => {
@@ -43,13 +44,18 @@ const ArchivePanel: React.FC<ArchivePanelProps> = ({ isOpen, onClose, onEditTask
         <button onClick={onClose} className="text-gray-600 hover:text-gray-800">✕</button>
       </div>
       <div className="p-4 space-y-4 overflow-y-auto h-[calc(100%-56px)]">
-        {archivedTasks.length === 0 ? (
-          <p className="text-gray-500 text-sm">No archived tasks found.</p>
-        ) : (
-          archivedTasks.map((task) => (
-            <TaskCard key={task.id} task={task} onEdit={onEditTask} />
-          ))
-        )}
+      {archivedTasks.length === 0 ? (
+        <p className="text-gray-500 text-sm">No archived tasks found.</p>
+      ) : (
+        archivedTasks.map((task) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            onEdit={onEditTask}
+            onDelete={onDeleteTask}
+          />
+        ))
+      )}
       </div>
     </div>
   );
