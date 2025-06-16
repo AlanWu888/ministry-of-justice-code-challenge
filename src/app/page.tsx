@@ -92,7 +92,7 @@ export default function Home() {
     } catch (err) {
       console.error("Delete error:", err);
     } finally {
-      setConfirmDeleteTask(null); // Close modal
+      setConfirmDeleteTask(null);
     }
   };
     
@@ -123,6 +123,7 @@ export default function Home() {
         onTaskCreated={fetchTasks}
         onEditTask={handleEdit}
         onOpenArchive={() => setShowArchive(true)}
+        tasks={tasks}
       />
       <div className="px-20">
         <br />

@@ -14,8 +14,6 @@ export async function GET(req: NextRequest) {
 
   if (statusParam === "ARCHIVED") {
     where = { archived: true };
-  } else {
-    where = { archived: false };
   }
 
   const tasks = await prisma.task.findMany({
