@@ -55,6 +55,7 @@ describe("NewTaskForm", () => {
   });
 
   it("shows alert on submission failure", async () => {
+    // this should throw an Error, when running unit tests, we should expect to see a console.error
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: false,
     });
