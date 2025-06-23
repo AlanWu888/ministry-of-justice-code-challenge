@@ -7,6 +7,10 @@ function isAuthorised(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  if (!isAuthorised(req)) {
+    return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+  }
+
   const { searchParams } = new URL(req.url);
   const statusParam = searchParams.get("status");
 
