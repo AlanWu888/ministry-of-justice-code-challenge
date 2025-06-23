@@ -1,15 +1,15 @@
 import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
+import { isAuthorised, UNAUTHORISED } from '@/utils/api';
 
-function isAuthorised(req: NextRequest) {
-  const authHeader = req.headers.get('authorization')
-  return authHeader === `Bearer ${process.env.NEXT_PUBLIC_API_SECRET}`
-}
-
+/**
+ * @route   GET /api/tasks
+ * @desc    Fetch all tasks (optionally filter by status)
+ * @access  Protected
+ * @returns {Task[]} List of task objects
+ */
 export async function GET(req: NextRequest) {
-  if (!isAuthorised(req)) {
-    return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
-  }
+  if (!isAuthorised(req)) return UNAUTHORISED;
 
   const { searchParams } = new URL(req.url);
   const statusParam = searchParams.get("status");
@@ -28,10 +28,15 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(tasks);
 }
 
+/**
+ * @route   POST /api/tasks
+ * @desc    Create a new task
+ * @access  Protected
+ * @body    { title: string, description: string, dueDate: string, status: "TODO"|"IN_PROGRESS"|"DONE" }
+ * @returns {Task} The created task object
+ */
 export async function POST(req: NextRequest) {
-  if (!isAuthorised(req)) {
-    return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
-  }
+  if (!isAuthorised(req)) return UNAUTHORISED;
 
   const body = await req.json()
   const { title, description, status, dueDate } = body
