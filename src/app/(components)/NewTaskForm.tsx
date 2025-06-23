@@ -37,23 +37,45 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSave, onCancel }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium">Title</label>
-        <input className="w-full border px-3 py-2 rounded" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        <label htmlFor="title" className="block text-sm font-medium">Title</label>
+        <input
+          id="title"
+          className="w-full border px-3 py-2 rounded"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
       </div>
 
       <div>
-        <label className="block text-sm font-medium">Description</label>
-        <textarea className="w-full border px-3 py-2 rounded" value={description} onChange={(e) => setDescription(e.target.value)} />
+        <label htmlFor="description" className="block text-sm font-medium">Description</label>
+        <textarea
+          id="description"
+          className="w-full border px-3 py-2 rounded"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
       </div>
 
       <div>
-        <label className="block text-sm font-medium">Due Date</label>
-        <input type="datetime-local" className="w-full border px-3 py-2 rounded" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+        <label htmlFor="dueDate" className="block text-sm font-medium">Due Date</label>
+        <input
+          id="dueDate"
+          type="datetime-local"
+          className="w-full border px-3 py-2 rounded"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+        />
       </div>
 
       <div>
-        <label className="block text-sm font-medium">Status</label>
-        <select className="w-full border px-3 py-2 rounded" value={status} onChange={(e) => setStatus(e.target.value as any)}>
+        <label htmlFor="status" className="block text-sm font-medium">Status</label>
+        <select
+          id="status"
+          className="w-full border px-3 py-2 rounded"
+          value={status}
+          onChange={(e) => setStatus(e.target.value as any)}
+        >
           <option value="TODO">TODO</option>
           <option value="IN_PROGRESS">IN_PROGRESS</option>
           <option value="DONE">DONE</option>

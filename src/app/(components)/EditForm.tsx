@@ -21,10 +21,11 @@ const EditForm: React.FC<EditFormProps> = ({ task, onSave, onCancel, onToggleArc
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form role="form" onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium">Title</label>
+        <label htmlFor="title" className="block text-sm font-medium">Title</label>
         <input
+          id="title"
           className="w-full border px-3 py-2 rounded"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -33,8 +34,9 @@ const EditForm: React.FC<EditFormProps> = ({ task, onSave, onCancel, onToggleArc
       </div>
 
       <div>
-        <label className="block text-sm font-medium">Description</label>
+        <label htmlFor="description" className="block text-sm font-medium">Description</label>
         <textarea
+          id="description"
           className="w-full border px-3 py-2 rounded"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -42,8 +44,9 @@ const EditForm: React.FC<EditFormProps> = ({ task, onSave, onCancel, onToggleArc
       </div>
 
       <div>
-        <label className="block text-sm font-medium">Due Date</label>
+        <label htmlFor="dueDate" className="block text-sm font-medium">Due Date</label>
         <input
+          id="dueDate"
           type="datetime-local"
           className="w-full border px-3 py-2 rounded"
           value={dueDate.slice(0, 16)}
@@ -52,8 +55,9 @@ const EditForm: React.FC<EditFormProps> = ({ task, onSave, onCancel, onToggleArc
       </div>
 
       <div>
-        <label className="block text-sm font-medium">Status</label>
+        <label htmlFor="status" className="block text-sm font-medium">Status</label>
         <select
+          id="status"
           className="w-full border px-3 py-2 rounded"
           value={status}
           onChange={(e) => setStatus(e.target.value as Task["status"])}
