@@ -47,7 +47,12 @@ const TaskForm: React.FC<TaskFormProps> = ({ mode, task, onSave, onCancel, onTog
     e.preventDefault();
     if (!validate()) return;
 
-    const payload = { title, description, dueDate, status };
+    const payload = {
+      title,
+      description,
+      dueDate: new Date(dueDate).toISOString(),
+      status,
+    };    
 
     if (mode === "new") {
       try {
