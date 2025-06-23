@@ -1,5 +1,8 @@
 import type { Config } from 'jest'
 import nextJest from 'next/jest.js'
+import { pathsToModuleNameMapper } from 'ts-jest';
+import { compilerOptions } from './tsconfig.json';
+
 // const nextJest = require('next/jest')
  
 const createJestConfig = nextJest({
@@ -17,6 +20,10 @@ const config: Config = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   
   preset: 'ts-jest',
+
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
+    prefix: '<rootDir>/',
+  }),
 }
  
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
