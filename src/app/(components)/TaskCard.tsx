@@ -32,7 +32,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete }) => {
         <p style={{ marginTop: "5px" }}>{description}</p>
       </div>
       <div style={{ marginTop: "10px", fontSize: "0.75rem" }}>
-        Due: {new Date(dueDate).toISOString().split("T").join(" ").slice(0, 16)}
+        Due:{" "}
+        {new Date(dueDate).toLocaleString("en-GB", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        })}
       </div>
     </div>
   );

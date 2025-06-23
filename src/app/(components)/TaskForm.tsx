@@ -50,9 +50,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ mode, task, onSave, onCancel, onTog
     const payload = {
       title,
       description,
-      dueDate: new Date(dueDate).toISOString(),
+      dueDate: new Date(dueDate).toISOString(), 
       status,
-    };    
+    };
 
     if (mode === "new") {
       try {
@@ -74,6 +74,14 @@ const TaskForm: React.FC<TaskFormProps> = ({ mode, task, onSave, onCancel, onTog
     } else if (mode === "edit" && task) {
       onSave({ ...task, ...payload });
     }
+  };
+
+  const getLocalInputValue = (isoDate: string) => {
+    if (!isoDate) return "";
+    const date = new Date(isoDate);
+    const tzOffset = date.getTimezoneOffset() * 60000;
+    const localDate = new Date(date.getTime() - tzOffset);
+    return localDate.toISOString().slice(0, 16);
   };
 
   return (
@@ -106,7 +114,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ mode, task, onSave, onCancel, onTog
           id="dueDate"
           type="datetime-local"
           className="w-full border px-3 py-2 rounded"
-          value={dueDate.slice(0, 16)}
+          value={getLocalInputValue(dueDate)}
           onChange={(e) => setDueDate(e.target.value)}
         />
         {errors.dueDate && <p className="text-red-500 text-sm">{errors.dueDate}</p>}

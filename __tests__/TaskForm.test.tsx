@@ -4,7 +4,7 @@ import TaskForm from "@/app/(components)/TaskForm";
 import { mockTask } from "../__mocks__/mockTasks";
 
 describe("TaskForm Component", () => {
-  test("renders all input fields", () => {
+  it("renders all input fields", () => {
     render(<TaskForm mode="new" onSave={() => {}} onCancel={() => {}} />);
 
     expect(screen.getByLabelText(/title/i)).toBeInTheDocument();
@@ -14,7 +14,7 @@ describe("TaskForm Component", () => {
     expect(screen.getByText(/create/i)).toBeInTheDocument();
   });
 
-  test("shows validation errors for empty and invalid fields", async () => {
+  it("shows validation errors for empty and invalid fields", async () => {
     render(<TaskForm mode="new" onSave={() => {}} onCancel={() => {}} />);
 
     fireEvent.click(screen.getByText(/create/i));
@@ -25,7 +25,7 @@ describe("TaskForm Component", () => {
     });
   });
 
-  test("calls onSave with form data in 'new' mode", async () => {
+  it("calls onSave with form data in 'new' mode", async () => {
     global.fetch = jest.fn(() =>
       Promise.resolve({ ok: true, json: () => Promise.resolve({}) })
     ) as any;
@@ -48,7 +48,15 @@ describe("TaskForm Component", () => {
     });
   });
 
-  test("renders with task data in 'edit' mode", () => {
+  it("renders with task data in 'edit' mode", () => {
+    const expectedLocalDateValue = (() => {
+      // expect the same local datetime string rendered in the form input
+      const date = new Date(mockTask.dueDate);
+      const offset = date.getTimezoneOffset();
+      const localDate = new Date(date.getTime() - offset * 60000);
+      return localDate.toISOString().slice(0, 16);
+    })();
+
     render(
       <TaskForm
         mode="edit"
@@ -59,13 +67,13 @@ describe("TaskForm Component", () => {
     );
 
     expect(screen.getByDisplayValue(mockTask.title)).toBeInTheDocument();
-    expect(screen.getByDisplayValue(mockTask.description)).toBeInTheDocument();
-    expect(screen.getByDisplayValue(mockTask.dueDate.slice(0, 16))).toBeInTheDocument();
+    expect(screen.getByDisplayValue(mockTask.description)).toBeInTheDocument();    
+    expect(screen.getByDisplayValue(expectedLocalDateValue)).toBeInTheDocument();
     expect(screen.getByDisplayValue(mockTask.status)).toBeInTheDocument();
     expect(screen.getByText(/save/i)).toBeInTheDocument();
   });
 
-  test("calls onSave with updated task in 'edit' mode", async () => {
+  it("calls onSave with updated task in 'edit' mode", async () => {
     const mockOnSave = jest.fn();
     render(
       <TaskForm
@@ -84,7 +92,7 @@ describe("TaskForm Component", () => {
     });
   });
 
-  test("renders Archive button only in edit mode and calls onToggleArchive", () => {
+  it("renders Archive button only in edit mode and calls onToggleArchive", () => {
     const mockToggle = jest.fn();
     render(
       <TaskForm
