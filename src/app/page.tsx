@@ -78,7 +78,7 @@ export default function Home() {
     if (!confirmDeleteTask) return;
   
     try {
-      const res = await fetch(`/api/tasks/${confirmDeleteTask.id}`, {
+      const res = await fetch(`/api/tasks/${confirmDeleteTask.id}/delete`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_SECRET}`,
