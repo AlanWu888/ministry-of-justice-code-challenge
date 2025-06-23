@@ -4,11 +4,11 @@ export const mockTask: Task = {
   id: 1,
   title: "Test Task",
   description: "Test Description",
-  dueDate: "2025-06-20T12:00:00",
+  dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),  // 24 hours into the future
   status: "TODO",
   archived: false,
-  createdAt: "2025-06-01T00:00",
-  updatedAt: "2025-06-10T00:00",
+  createdAt: new Date(Date.now()).toISOString(),
+  updatedAt: new Date(Date.now()).toISOString(),
 };
 
 export const mockTasks: Task[] = [

@@ -39,7 +39,7 @@ const ArchivePanel: React.FC<ArchivePanelProps> = ({ isOpen, onClose, onEditTask
 
   return (
     <div className={`fixed top-0 left-0 h-full w-96 bg-white shadow-xl z-50 transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
-      <div className="flex items-center justify-between p-4 border-b">
+      <div className="flex items-center justify-between pt-4.5 pb-5 pl-4 pr-4 border-b">
         <h2 className="text-lg font-bold">Archived Tasks</h2>
         <button onClick={onClose} className="text-gray-600 hover:text-gray-800">✕</button>
       </div>

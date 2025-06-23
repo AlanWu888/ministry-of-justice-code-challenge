@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import NavBar from "./(components)/NavBar";
 import TaskBoard from "./(components)/TaskBoard";
 import Modal from "./(components)/Modal";
-import EditForm from "./(components)/EditForm";
+import TaskForm from "./(components)/TaskForm";
 import ArchivePanel from "./(components)/ArchivePanel";
 import { Task } from "@/types/task";
 import ConfirmModal from "./(components)/ConfirmationModal";
@@ -137,9 +137,12 @@ export default function Home() {
           {editingTask && (
             <>
               <h3 className="text-lg font-semibold mb-4">Edit Task</h3>
-              <EditForm
+              <TaskForm
+                mode="edit"
                 task={editingTask}
-                onSave={handleTaskUpdate}
+                onSave={(task) => {
+                  if (task) handleTaskUpdate(task);
+                }}
                 onCancel={() => setEditingTask(null)}
                 onToggleArchive={handleToggleArchive}
               />

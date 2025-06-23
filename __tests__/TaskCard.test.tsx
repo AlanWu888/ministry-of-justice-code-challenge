@@ -11,7 +11,10 @@ describe("TaskCard", () => {
     expect(screen.getByText(mockTask.description)).toBeInTheDocument();
     expect(
       screen.getByText(
-        `Due: ${new Date(mockTask.dueDate).toISOString().split("T").join(" ").slice(0, 16)}`
+        `Due: ${new Date(mockTask.dueDate).toLocaleString("en-GB", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        })}`
       )
     ).toBeInTheDocument();
   });
