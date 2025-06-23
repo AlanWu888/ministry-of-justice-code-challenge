@@ -1,18 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import EditForm from "@/app/(components)/EditForm";
-import { Task } from "@/types/task";
-
-const mockTask: Task = {
-  id: 1,
-  title: "Test Task",
-  description: "A test description",
-  dueDate: "2025-06-20T10:00",
-  status: "TODO",
-  archived: false,
-  createdAt: '2025-06-01T00:00', 
-  updatedAt: '2025-06-10T00:00'
-};
+import { mockTask } from "../__mocks__/mockTasks";
 
 const setup = (overrides = {}) => {
   const onSave = jest.fn();
@@ -35,8 +24,8 @@ describe("EditForm", () => {
   test("renders with task values", () => {
     setup();
     expect(screen.getByDisplayValue("Test Task")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("A test description")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("2025-06-20T10:00")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Test Description")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("2025-06-20T12:00")).toBeInTheDocument();
     expect(screen.getByDisplayValue("TODO")).toBeInTheDocument();
   });
 

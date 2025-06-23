@@ -1,30 +1,9 @@
 import React from "react";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import ArchivePanel from "@/app/(components)/ArchivePanel";
-import { Task } from "@/types/task";
+import { mockTasks } from "../__mocks__/mockTasks";
 
-const mockTasks: Task[] = [
-  {
-    id: 1,
-    title: "Archived Task",
-    description: "This task is archived",
-    dueDate: "2025-07-01T00:00",
-    status: "TODO",
-    archived: false,
-    createdAt: "2025-06-01T00:00",
-    updatedAt: "2025-06-10T00:00",
-  },
-  {
-    id: 2,
-    title: "Non-Archived Task",
-    description: "This task is not archived",
-    dueDate: "2025-07-01T00:00",
-    status: "DONE",
-    archived: true,
-    createdAt: "2025-06-01T00:00",
-    updatedAt: "2025-06-10T00:00",
-  },
-];
+const archivedMockTasks = mockTasks.filter((t) => t.archived);
 
 const mockFetch = (data: any) =>
   jest.fn().mockResolvedValue({
@@ -34,7 +13,7 @@ const mockFetch = (data: any) =>
 
 describe("ArchivePanel", () => {
   beforeEach(() => {
-    global.fetch = mockFetch(mockTasks.filter((t) => t.archived));
+    global.fetch = mockFetch(archivedMockTasks);
   });
 
   afterEach(() => {
@@ -67,9 +46,9 @@ describe("ArchivePanel", () => {
     );
 
     await waitFor(() => {
-      expect(
-        screen.getByRole("heading", { name: "Non-Archived Task" })
-      ).toBeInTheDocument();
+      archivedMockTasks.forEach((task) => {
+        expect(screen.getByRole("heading", { name: task.title })).toBeInTheDocument();
+      });
     });
   });
 
@@ -87,9 +66,7 @@ describe("ArchivePanel", () => {
     );
 
     await waitFor(() => {
-      expect(
-        screen.getByText("No archived tasks found.")
-      ).toBeInTheDocument();
+      expect(screen.getByText("No archived tasks found.")).toBeInTheDocument();
     });
   });
 
@@ -109,24 +86,20 @@ describe("ArchivePanel", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("heading", { name: "Non-Archived Task" })
+        screen.getByRole("heading", { name: archivedMockTasks[0].title })
       ).toBeInTheDocument();
     });
 
     const editButton = screen
       .getAllByRole("button")
-      .find((btn) =>
-        btn.querySelector("svg")?.classList.contains("lucide-pencil")
-      );
+      .find((btn) => btn.querySelector("svg")?.classList.contains("lucide-pencil"));
     fireEvent.click(editButton!);
-    expect(onEditTask).toHaveBeenCalledWith(mockTasks[1]);
+    expect(onEditTask).toHaveBeenCalledWith(archivedMockTasks[0]);
 
     const deleteButton = screen
       .getAllByRole("button")
-      .find((btn) =>
-        btn.querySelector("svg")?.classList.contains("lucide-trash")
-      );
+      .find((btn) => btn.querySelector("svg")?.classList.contains("lucide-trash"));
     fireEvent.click(deleteButton!);
-    expect(onDeleteTask).toHaveBeenCalledWith(mockTasks[1]);
+    expect(onDeleteTask).toHaveBeenCalledWith(archivedMockTasks[0]);
   });
 });

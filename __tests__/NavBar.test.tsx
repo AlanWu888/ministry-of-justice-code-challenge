@@ -1,12 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import NavBar from '@/app/(components)/NavBar';
-import { Task } from '@/types/task';
-
-const mockTasks: Task[] = [
-  { id: 1, title: 'Test Task One', description: '', dueDate: '2025-07-01T00:00', status: 'TODO', archived: false, createdAt: '2025-06-01T00:00', updatedAt: '2025-06-10T00:00'},
-  { id: 2, title: 'Archived Task', description: '', dueDate: '2025-07-01T00:00', status: 'DONE', archived: true, createdAt: '2025-06-01T00:00', updatedAt: '2025-06-10T00:00'},
-];
+import { mockTasks } from '../__mocks__/mockTasks';
 
 describe('NavBar', () => {
   const onTaskCreated = jest.fn();
@@ -42,9 +37,9 @@ describe('NavBar', () => {
     );
 
     const searchInput = screen.getByPlaceholderText(/search tasks/i);
-    fireEvent.change(searchInput, { target: { value: 'Test' } });
+    fireEvent.change(searchInput, { target: { value: mockTasks[0].title.split(' ')[0] } });
 
-    expect(screen.getByText('Test Task One')).toBeInTheDocument();
+    expect(screen.getByText(mockTasks[0].title)).toBeInTheDocument();
   });
 
   it('triggers onEditTask when a search result is clicked', () => {
@@ -58,10 +53,10 @@ describe('NavBar', () => {
     );
 
     fireEvent.change(screen.getByPlaceholderText(/search tasks/i), {
-      target: { value: 'Archived' },
+      target: { value: mockTasks[1].title },
     });
 
-    fireEvent.click(screen.getByText('Archived Task'));
+    fireEvent.click(screen.getByText(mockTasks[1].title));
     expect(onEditTask).toHaveBeenCalledWith(mockTasks[1]);
   });
 
