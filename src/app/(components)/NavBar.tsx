@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Button from "./Button";
 import Modal from "./Modal";
-import NewTaskForm from "./NewTaskForm";
+import TaskForm from "./TaskForm";
 import { Task } from "@/types/task";
 
 interface NavBarProps {
@@ -83,7 +83,8 @@ const NavBar: React.FC<NavBarProps> = ({ onTaskCreated, onEditTask, onOpenArchiv
 
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <h3 className="text-lg font-semibold mb-4">Create New Task</h3>
-          <NewTaskForm
+          <TaskForm
+            mode="new"
             onSave={() => {
               setIsModalOpen(false);
               onTaskCreated();
