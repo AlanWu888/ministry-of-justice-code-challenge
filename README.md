@@ -27,13 +27,11 @@ Your NEXT_PUBLIC_API_SECRET key can be anything you want. During development, I 
 
 ## Database Setup
 
-1. **Run Prisma migrations:**
+This project includes a preconfigured local database. If you prefer not to use the default setup, you can manually seed the database with initial data.
 
-```bash
-npx prisma migrate deploy
-```
+### Optional: Seed the Database
 
-2. **Seed the database:**
+To seed the database, run the following command:
 
 ```bash
 npx prisma db seed
@@ -88,3 +86,15 @@ Full API reference is available here:
 ## License
 
 MIT — feel free to use, modify, and share.
+
+---
+
+### Dependency Warnings
+
+You may see warnings like the following when running `npm install`:
+
+```bash
+npm WARN deprecated inflight@1.0.6: This module is not supported...
+npm WARN deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+```
+These warnings are from indirect dependencies of jest and cannot be resolved until its upstream packages are updated. They do not affect functionality, and it is safe to proceed with installation and development.
