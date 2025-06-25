@@ -27,11 +27,20 @@ Your NEXT_PUBLIC_API_SECRET key can be anything you want. During development, I 
 
 ## Database Setup
 
-This project includes a preconfigured local database. If you prefer not to use the default setup, you can manually seed the database with initial data.
+This project comes with a preconfigured local database for your convenience. However, if you prefer a custom setup, you can manually seed the database with initial data.
 
-### Optional: Seed the Database
+### Step 1: Generate the Database Client
 
-To seed the database, run the following command:
+Run the following command to generate the Prisma client:
+
+```bash
+prisma generate
+
+```
+
+### Step 2 (Optional): Seed the Database
+
+If you'd like to populate the database with sample data, run:
 
 ```bash
 npx prisma db seed
